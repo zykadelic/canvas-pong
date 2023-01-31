@@ -1,0 +1,65 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+button {
+  font-family: 'Monofonto', sans-serif;
+  text-transform: uppercase;
+}
+
+body {
+  margin: 0;
+}
+
+#canvas {
+  display: block;
+  background: black;
+}
+
+#titleScreen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#title {
+  font-size: 2em;
+  font-weight: normal;
+}
+
+#menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.button {
+  border: 1px solid white;
+  border-radius: 1px;
+  background: transparent;
+  font-size: 1.5em;
+  color: white;
+  cursor: pointer;
+}
+
+.button:hover,
+.button:focus,
+.button:active {
+  background-color: white;
+  color: black;
+}
+
+.hidden {
+  display: none !important;
+}
