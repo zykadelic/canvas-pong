@@ -11,16 +11,15 @@ export default class Game {
     this.#resize();
 
     this.ball = new Ball(this.#context);
-    this.player1 = new Player(this.#context, 'left');
-    this.player2 = new Player(this.#context, 'right');
+    this.leftPlayer = new Player(this.#context, 'left');
+    this.rightPlayer = new Player(this.#context, 'right');
     this.#renderBaseFrame();
 
     this.newServeDelay = -this.ball.dx * 50;
-    this.winningScore = 3;
 
     window.addEventListener('resize', () => {
       this.#resize();
-      this.#renderBaseFrame(); // unless game running
+      this.#renderBaseFrame(); // TODO unless game is running
     });
   }
 
@@ -32,36 +31,55 @@ export default class Game {
   // used to draw a static preview of the game before it has started
   #renderBaseFrame() {
     this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-    this.player1.draw();
-    this.player2.draw();
+    this.leftPlayer.draw();
+    this.rightPlayer.draw();
   }
 
-  // TODO use delta for framerate smoothing
   #loop() {
     this.#renderBaseFrame();
+    this.ball.draw().detectPlayerCollision(this.leftPlayer, this.rightPlayer);
 
-    // player1.collisionDetection(ball);
-    // player2.collisionDetection(ball);
-    this.ball.draw().detectPlayerCollision(this.player1, this.player2);
+    if (this.leftPlayer.missed && this.ball.x + this.ball.radius < this.newServeDelay) {
+      this.leftPlayer.health--;
+      this.ball.serve();
+      this.leftPlayer.missed = false;
 
-    // if (player1.missed && ball.x < 0) player2.scores();
-    // if (player2.missed && ball.x > canvas.width - ball.radius) player1.scores();
-    if (this.player1.missed && this.ball.x + this.ball.radius < this.newServeDelay) {
-      this.player2.scores();
-      this.ball.serve();
-      this.player1.missed = false;
+      window.dispatchEvent(new CustomEvent('player:scored', {
+        detail: {
+          scoringPlayer: this.rightPlayer,
+          missingPlayer: this.leftPlayer,
+        },
+      }));
     }
-    if (this.player2.missed && this.ball.x > canvas.width - this.newServeDelay) {
-      this.player1.scores();
+
+    if (this.rightPlayer.missed && this.ball.x > canvas.width - this.newServeDelay) {
+      this.rightPlayer.health--;
       this.ball.serve();
-      this.player2.missed = false;
+      this.rightPlayer.missed = false;
+
+      window.dispatchEvent(new CustomEvent('player:scored', {
+        detail: {
+          scoringPlayer: this.leftPlayer,
+          missingPlayer: this.rightPlayer,
+        },
+      }));
     }
-    if (this.player1.score >= this.winningScore || this.player2.score >= this.winningScore) {
-      this.#renderBaseFrame(); // update score before returning
-      // TODO use custom event emitter on `this`
+
+    if (this.leftPlayer.health <= 0) {
       window.dispatchEvent(new CustomEvent('game:over', {
         detail: {
-          score: `${this.player1.score}-${this.player2.score}`,
+          winningPlayer: this.rightPlayer,
+          losingPlayer: this.leftPlayer,
+        },
+      }));
+      return;
+    }
+
+    if (this.rightPlayer.health <= 0) {
+      window.dispatchEvent(new CustomEvent('game:over', {
+        detail: {
+          winningPlayer: this.leftPlayer,
+          losingPlayer: this.rightPlayer,
         },
       }));
       return;
@@ -71,9 +89,8 @@ export default class Game {
   }
 
   start() {
-    // TODO full game area reset
-    this.player1.score = 0;
-    this.player2.score = 0;
+    this.leftPlayer.health = this.leftPlayer.maxHealth;
+    this.rightPlayer.health = this.rightPlayer.maxHealth;
 
     this.#loop();
   }

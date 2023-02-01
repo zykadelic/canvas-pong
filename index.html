@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,9 +9,27 @@
   <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/monofonto">
   <link rel="stylesheet" href="./style/index.css">
 </head>
-
 <body>
   <canvas id="canvas"></canvas>
+  <div id="hud">
+    <div id="health-bars">
+      <ol class="player-health" data-player="left">
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+      </ol>
+      <ol class="player-health" data-player="right">
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+        <li class="player-health-point" data-fill="full"></li>
+      </ol>
+    </div>
+  </div>
+
   <section id="titleScreen">
     <h1 id="title">
       Canvas Pong<br>
@@ -26,5 +43,4 @@
   </section>
   <script src="./script/index.js" type="module"></script>
 </body>
-
 </html>

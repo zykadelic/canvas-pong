@@ -1,6 +1,6 @@
 export default class Player {
-  constructor(canvasContext, playerSide) {
-    if (!['left', 'right'].includes(playerSide)) throw new Error(`Player was instantiated with invalid playerSide: ${playerSide}`);
+  constructor(canvasContext, playingSide) {
+    if (!['left', 'right'].includes(playingSide)) throw new Error(`Player was instantiated with invalid playingSide: ${playingSide}`);
 
     this.ctx = canvasContext;
     this.width = 20;
@@ -8,14 +8,15 @@ export default class Player {
     this.x = 40;
     this.y = (canvas.height - this.height) / 2;
     this.speed = 7;
-    this.playerSide = playerSide;
+    this.playingSide = playingSide;
     this.movingUp = false;
     this.movingDown = false;
-    this.score = 0;
+    this.maxHealth = 11;
+    this.health = 11;
     // used to prevent a ball hit if the ball has already passed the player by the time they reach it
     this.missed = false;
 
-    if (this.playerSide === 'left') {
+    if (this.playingSide === 'left') {
       addEventListener('keydown', (e) => {
         if (e.key === 'w') this.movingUp = true;
         if (e.key === 's') this.movingDown = true;
@@ -41,12 +42,10 @@ export default class Player {
   #drawPaddle() {
     if (this.movingUp) {
       this.y -= this.speed;
-      console.log(`${this.playerSide} player moving up`);
       if (this.y < 0) this.y = 0;
     }
     if (this.movingDown) {
       this.y += this.speed;
-      console.log(`${this.playerSide} player moving down`);
       if (this.y > canvas.height - this.height) this.y = canvas.height - this.height;
     }
 
@@ -57,40 +56,8 @@ export default class Player {
     this.ctx.closePath();
   }
 
-  #drawScore() {
-    let scoreOffset = 20;
-    if (this.playerSide === 'left') scoreOffset = -scoreOffset;
-    this.ctx.font = '32px monospace';
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillText(this.score, canvas.width / 2 + scoreOffset, 30);
-  }
-
   draw() {
     this.#drawPaddle();
-    this.#drawScore();
-
     return this;
-  }
-
-  // collisionDetection(ball) {
-  //   const self = this;
-  //   const determineHit = (ball) => {
-  //     if (!this.missed && ball.y >= this.y && ball.y <= this.y + this.height) {
-  //       ball.dx = -ball.dx;
-  //     } else {
-  //       this.missed = true;
-  //     }
-  //   }
-
-  //   if (this.side === 'left') {
-  //     if (ball.x - ball.radius < this.x + this.width) determineHit(ball);
-  //   } else {
-  //     if (ball.x + ball.radius > this.x) determineHit(ball);
-  //   }
-  // }
-
-  scores() {
-    this.score++;
-    console.log(`${this.playerSide} player scores`);
   }
 }
