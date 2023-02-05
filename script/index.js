@@ -10,7 +10,7 @@ const playButton = document.querySelector('[data-play]');
 const game = new Game(canvas);
 
 const drawPlayerHealth = (player) => {
-  const hearts = healthBars[player.playingSide].children;
+  const hearts = healthBars[player.playField].children;
   const health = player.health / player.maxHealth * hearts.length;
   const fraction = health - Math.floor(health);
 
@@ -21,12 +21,12 @@ const drawPlayerHealth = (player) => {
   }
 
   if (health === 0) {
-    healthBars[player.playingSide].classList.remove('player-health--low');
-    healthBars[player.playingSide].classList.add('player-health--dead');
+    healthBars[player.playField].classList.remove('player-health--low');
+    healthBars[player.playField].classList.add('player-health--dead');
   } else if (health < 0.5) {
-    healthBars[player.playingSide].classList.add('player-health--low');
+    healthBars[player.playField].classList.add('player-health--low');
   } else {
-    healthBars[player.playingSide].classList.remove('player-health--low', 'player-health--dead');
+    healthBars[player.playField].classList.remove('player-health--low', 'player-health--dead');
   }
 };
 
@@ -47,6 +47,6 @@ window.addEventListener('player:scored', (e) => {
 });
 
 window.addEventListener('game:over', (e) => {
-  console.log(`${e.detail.winningPlayer.playingSide} player wins!`);
+  console.log(`${e.detail.winningPlayer.playField} player wins!`);
   setTimeout(() => titleScreen.classList.remove('hidden'), 300);
 });

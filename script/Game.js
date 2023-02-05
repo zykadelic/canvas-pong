@@ -10,12 +10,14 @@ export default class Game {
     this.#context = canvas.getContext('2d');
     this.#resize();
 
-    this.ball = new Ball(this.#context);
-    this.leftPlayer = new Player(this.#context, 'left');
-    this.rightPlayer = new Player(this.#context, 'right');
+    this.width = this.#canvas.width;
+    this.height = this.#canvas.height;
+    this.ball = new Ball(this.#canvas);
+    this.leftPlayer = new Player(this.#canvas, 'left');
+    this.rightPlayer = new Player(this.#canvas, 'right');
     this.#renderBaseFrame();
 
-    this.newServeDelay = -this.ball.dx * 50;
+    this.newServeDelay = -this.ball.velocity.x * 50;
 
     window.addEventListener('resize', () => {
       this.#resize();
@@ -39,7 +41,7 @@ export default class Game {
     this.#renderBaseFrame();
     this.ball.draw().detectPlayerCollision(this.leftPlayer, this.rightPlayer);
 
-    if (this.leftPlayer.missed && this.ball.x + this.ball.radius < this.newServeDelay) {
+    if (this.leftPlayer.missed && this.ball.position.x + this.ball.radius < this.newServeDelay) {
       this.leftPlayer.health--;
       this.ball.serve();
       this.leftPlayer.missed = false;
@@ -52,7 +54,7 @@ export default class Game {
       }));
     }
 
-    if (this.rightPlayer.missed && this.ball.x > canvas.width - this.newServeDelay) {
+    if (this.rightPlayer.missed && this.ball.position.x > canvas.width - this.newServeDelay) {
       this.rightPlayer.health--;
       this.ball.serve();
       this.rightPlayer.missed = false;

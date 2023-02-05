@@ -1,45 +1,49 @@
 export default class Ball {
-  constructor(canvasContext) {
-    this.ctx = canvasContext;
-    this.radius = 20;
-    this.x = canvas.width / 2;
-    this.y = canvas.height / 2;
+  #context;
 
-    // velocity
-    this.dx = 4;
-    this.dy = 2;
+  constructor(canvas) {
+    this.#context = canvas.getContext('2d');
+    this.radius = 20;
+    this.position = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+    };
+    this.velocity = {
+      x: 4,
+      y: 2,
+    };
   }
 
   draw() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    this.ctx.fillStyle = 'white';
-    this.ctx.fill();
-    this.ctx.closePath();
+    this.#context.beginPath();
+    this.#context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    this.#context.fillStyle = 'white';
+    this.#context.fill();
+    this.#context.closePath();
 
-    // wall collision: inverse the velocity
-    if (this.y + this.dy < this.radius || this.y + this.dy > canvas.height - this.radius) {
-      this.dy = -this.dy;
+    // wall collision: inverse the y velocity
+    if (this.position.y + this.velocity.y < this.radius || this.position.y + this.velocity.y > canvas.height - this.radius) {
+      this.velocity.y = -this.velocity.y;
     }
 
-    this.x += this.dx;
-    this.y += this.dy;
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
 
     return this;
   }
 
   serve() {
-    this.x = canvas.width / 2;
-    this.y = canvas.height / 2;
+    this.position.x = canvas.width / 2;
+    this.position.y = canvas.height / 2;
 
     // inverse horizontal direction between serves
-    this.dx = -this.dx;
+    this.velocity.x = -this.velocity.x;
   }
 
   detectPlayerCollision(player1, player2) {
     const attemptHit = (player) => {
-      if (this.y >= player.y && this.y <= player.y + player.height) {
-        this.dx = -this.dx;
+      if (this.position.y >= player.position.y && this.position.y <= player.position.y + player.height) {
+        this.velocity.x = -this.velocity.x;
         return true;
       } else {
         player.missed = true;
@@ -47,7 +51,7 @@ export default class Ball {
       }
     }
 
-    if (!player1.missed && this.x - this.radius < player1.x + player1.width) attemptHit(player1);
-    if (!player2.missed && this.x + this.radius > player2.x) attemptHit(player2);
+    if (!player1.missed && this.position.x - this.radius < player1.position.x + player1.width) attemptHit(player1);
+    if (!player2.missed && this.position.x + this.radius > player2.position.x) attemptHit(player2);
   }
 };
