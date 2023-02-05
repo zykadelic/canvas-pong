@@ -31,10 +31,10 @@ const drawPlayerHealth = (player) => {
 };
 
 const startGame = () => {
-  drawPlayerHealth(game.leftPlayer);
-  drawPlayerHealth(game.rightPlayer);
   titleScreen.classList.add('hidden');
   game.start();
+  drawPlayerHealth(game.leftPlayer);
+  drawPlayerHealth(game.rightPlayer);
 }
 
 playButton.addEventListener('click', startGame);
