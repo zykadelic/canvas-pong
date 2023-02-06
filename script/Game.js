@@ -9,12 +9,16 @@ export default class Game {
 
   #canvas;
   #previousTime;
+  #fps = 0.0;
   // #targetDelta = 1 / 60 * 1000; // 60 fps
   #running = false;
   #missedBallRunway = 500;
 
+  constructor({ canvas, debug }) {
+    this.debug = {
+      fps: !!(debug.fps ?? false),
+    };
 
-  constructor(canvas) {
     this.#canvas = canvas;
     this.context = canvas.getContext('2d');
     this.width;
@@ -69,11 +73,19 @@ export default class Game {
     }
   }
 
+  #renderFPSCounter() {
+    this.context.font = '1em Monofonto, sans-serif';
+    this.context.textAlign = 'center';
+    this.context.fillStyle = 'white';
+    this.context.fillText(this.#fps.toFixed(2), this.width / 2, this.height - 20);
+  }
+
   #render() {
     this.context.clearRect(0, 0, this.width, this.height);
     this.leftPlayer.render();
     this.rightPlayer.render();
     this.ball.render();
+    if (this.debug.fps) this.#renderFPSCounter();
   }
 
   #loop(time) {
@@ -85,6 +97,7 @@ export default class Game {
 
     const delta = time - this.#previousTime;
     this.#previousTime = time;
+    this.#fps = 1000 / delta;
     this.#update(delta);
     this.#render();
     // let updateOnce = true;

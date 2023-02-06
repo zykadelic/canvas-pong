@@ -7,7 +7,7 @@ const healthBars = {
 };
 const titleScreen = document.querySelector('#titleScreen');
 const playButton = document.querySelector('[data-play]');
-const game = new Game(canvas);
+const game = new Game({ canvas, debug: { fps: true } });
 
 const drawPlayerHealth = (player) => {
   const hearts = healthBars[player.playField].children;
