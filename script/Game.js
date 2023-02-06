@@ -2,98 +2,124 @@ import Player from './Player.js';
 import Ball from './Ball.js';
 
 export default class Game {
+  static EVENTS = {
+    playerScored: 'player:scored',
+    gameOver: 'game:over',
+  };
+
   #canvas;
-  #context;
+  #previousTime;
+  // #targetDelta = 1 / 60 * 1000; // 60 fps
+  #running = false;
+  #missedBallRunway = 500;
+
 
   constructor(canvas) {
     this.#canvas = canvas;
-    this.#context = canvas.getContext('2d');
+    this.context = canvas.getContext('2d');
+    this.width;
+    this.height;
     this.#resize();
 
-    this.width = this.#canvas.width;
-    this.height = this.#canvas.height;
-    this.ball = new Ball(this.#canvas);
-    this.leftPlayer = new Player(this.#canvas, 'left');
-    this.rightPlayer = new Player(this.#canvas, 'right');
-    this.#renderBaseFrame();
-
-    this.newServeDelay = -this.ball.velocity.x * 50;
+    this.leftPlayer = new Player(this, 'left');
+    this.rightPlayer = new Player(this, 'right');
+    this.ball = new Ball(this);
+    this.#render();
 
     window.addEventListener('resize', () => {
       this.#resize();
-      this.#renderBaseFrame(); // TODO unless game is running
+      this.#render();
     });
   }
 
   #resize() {
     this.#canvas.width = window.innerWidth;
     this.#canvas.height = window.innerHeight;
+    this.width = this.#canvas.width;
+    this.height = this.#canvas.height;
   }
 
-  // used to draw a static preview of the game before it has started
-  #renderBaseFrame() {
-    this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-    this.leftPlayer.draw();
-    this.rightPlayer.draw();
+  // TODO replace with event bubbling from player.missed()
+  #playerMissed(player, otherPlayer) {
+    player.health--;
+    player.didMiss = false;
+
+    this.#publish(this.constructor.EVENTS.playerScored, {
+      scoringPlayer: otherPlayer,
+      missingPlayer: player,
+    });
+
+    if (player.health > 0) {
+      this.ball.serve();
+    } else {
+      this.#gameOver({ winner: otherPlayer, loser: player });
+    }
   }
 
-  #loop() {
-    this.#renderBaseFrame();
-    this.ball.draw().detectPlayerCollision(this.leftPlayer, this.rightPlayer);
+  #update(delta) {
+    this.leftPlayer.update(delta);
+    this.rightPlayer.update(delta);
+    this.ball.update(delta);
 
-    if (this.leftPlayer.missed && this.ball.position.x + this.ball.radius < this.newServeDelay) {
-      this.leftPlayer.health--;
-      this.ball.serve();
-      this.leftPlayer.missed = false;
-
-      window.dispatchEvent(new CustomEvent('player:scored', {
-        detail: {
-          scoringPlayer: this.rightPlayer,
-          missingPlayer: this.leftPlayer,
-        },
-      }));
+    if (this.leftPlayer.didMiss && this.ball.position.x < -this.#missedBallRunway) {
+      this.#playerMissed(this.leftPlayer, this.rightPlayer);
     }
-
-    if (this.rightPlayer.missed && this.ball.position.x > canvas.width - this.newServeDelay) {
-      this.rightPlayer.health--;
-      this.ball.serve();
-      this.rightPlayer.missed = false;
-
-      window.dispatchEvent(new CustomEvent('player:scored', {
-        detail: {
-          scoringPlayer: this.leftPlayer,
-          missingPlayer: this.rightPlayer,
-        },
-      }));
+    if (this.rightPlayer.didMiss && this.ball.position.x > this.#missedBallRunway + this.width) {
+      this.#playerMissed(this.rightPlayer, this.leftPlayer);
     }
+  }
 
-    if (this.leftPlayer.health <= 0) {
-      window.dispatchEvent(new CustomEvent('game:over', {
-        detail: {
-          winningPlayer: this.rightPlayer,
-          losingPlayer: this.leftPlayer,
-        },
-      }));
+  #render() {
+    this.context.clearRect(0, 0, this.width, this.height);
+    this.leftPlayer.render();
+    this.rightPlayer.render();
+    this.ball.render();
+  }
+
+  #loop(time) {
+    if (!this.#previousTime) {
+      this.#previousTime = time;
+      window.requestAnimationFrame((time) => this.#loop(time));
       return;
     }
 
-    if (this.rightPlayer.health <= 0) {
-      window.dispatchEvent(new CustomEvent('game:over', {
-        detail: {
-          winningPlayer: this.leftPlayer,
-          losingPlayer: this.rightPlayer,
-        },
-      }));
-      return;
-    }
+    const delta = time - this.#previousTime;
+    this.#previousTime = time;
+    this.#update(delta);
+    this.#render();
+    // let updateOnce = true;
+    // while (updateOnce || delta >= this.#targetDelta) {
+    //   updateOnce = false;
+    //   delta -= this.#targetDelta;
+    //   this.#update(delta);
+    // }
+    // this.#render(delta / this.#targetDelta);
 
-    window.requestAnimationFrame(() => this.#loop());
+    if (!this.#running) return;
+    window.requestAnimationFrame((time) => this.#loop(time));
+    // setTimeout(() => {
+    //   window.requestAnimationFrame((time) => this.#loop(time));
+    // }, targetDelta - delta);
+  }
+
+  #publish(event, message = {}) {
+    if (!Object.values(this.constructor.EVENTS).includes(event)) {
+      throw new Error(`Invalid event type received: ${event}`);
+    }
+    window.dispatchEvent(new CustomEvent(event, { detail: message }));
+  }
+
+  #gameOver({ winner, loser }) {
+    this.#running = false;
+    this.#publish(this.constructor.EVENTS.gameOver, { winner, loser });
   }
 
   start() {
     this.leftPlayer.health = this.leftPlayer.maxHealth;
     this.rightPlayer.health = this.rightPlayer.maxHealth;
-
+    this.ball.serve();
+    this.#previousTime = null;
+    this.#running = true;
     this.#loop();
   }
 }

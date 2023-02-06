@@ -42,11 +42,11 @@ window.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') startGame();
 });
 
-window.addEventListener('player:scored', (e) => {
+window.addEventListener(Game.EVENTS.playerScored, (e) => {
   drawPlayerHealth(e.detail.missingPlayer);
 });
 
-window.addEventListener('game:over', (e) => {
-  console.log(`${e.detail.winningPlayer.playField} player wins!`);
+window.addEventListener(Game.EVENTS.gameOver, (e) => {
+  console.log(`${e.detail.winner.playField} player wins!`);
   setTimeout(() => titleScreen.classList.remove('hidden'), 300);
 });

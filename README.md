@@ -6,9 +6,13 @@ The js is structured in a way to allow the "client" full control of the HUD and 
 
 ## TODO
 
-- Use the delta in requestAnimationFrame to smoothen out framerate spikes
 - Do a full reset of the game area when starting a new game (player position etc.)
 - Display player controls on the title screen
+- Player serves
+- Make player respond to screen resizes
 - Add highscore / list of past matches
 - Add a visual bounding box of the game area that's inside of the screen size
 - Implement [custom event emitters](https://css-tricks.com/understanding-event-emitters/) on the game class instances
+- Update the animation loop to support frame dropping _(fixed time step with variable rendering time)_
+  http://gameprogrammingpatterns.com/game-loop.html#play-catch-up
+  https://stackoverflow.com/a/25627639/638254

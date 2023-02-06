@@ -1,17 +1,18 @@
 export default class Player {
-  #context;
+  #game;
   #speed;
   #movingUp;
   #movingDown;
 
-  constructor(canvas, playField) {
+  constructor(game, playField) {
     if (!['left', 'right'].includes(playField)) {
       throw new Error(`Player was instantiated with invalid playField: ${playField}`);
     }
 
     const posXOffset = 40;
-    this.#context = canvas.getContext('2d');
-    this.#speed = 7;
+    this.#game = game;
+    this.context = game.context;
+    this.#speed = 0.9;
     this.#movingUp = false;
     this.#movingDown = false;
 
@@ -19,15 +20,15 @@ export default class Player {
     this.height = 100;
     this.playField = playField;
     this.position = {
-      x: this.playField === 'left' ? posXOffset : canvas.width - this.width - posXOffset,
-      y: (canvas.height - this.height) / 2,
+      x: this.playField === 'left' ? posXOffset : this.#game.width - this.width - posXOffset,
+      y: (this.#game.height - this.height) / 2,
     };
     this.maxHealth = 11;
     this.health = this.maxHealth;
 
     // used to prevent a ball hit if the ball has already
     // passed the player by the time they reach it
-    this.missed = false;
+    this.didMiss = false;
 
     this.#setupControls();
   }
@@ -53,22 +54,22 @@ export default class Player {
     });
   }
 
-  draw() {
-    if (this.#movingUp) {
-      this.position.y -= this.#speed;
-      if (this.position.y < 0) this.position.y = 0;
-    }
-    if (this.#movingDown) {
-      this.position.y += this.#speed;
-      if (this.position.y > canvas.height - this.height) this.position.y = canvas.height - this.height;
-    }
+  #checkWallCollision() {
+    if (this.position.y < 0) this.position.y = 0;
+    if (this.position.y > this.#game.height - this.height) this.position.y = this.#game.height - this.height;
+  }
 
-    this.#context.beginPath();
-    this.#context.rect(this.position.x, this.position.y, this.width, this.height);
-    this.#context.fillStyle = 'white';
-    this.#context.fill();
-    this.#context.closePath();
+  update(delta) {
+    if (this.#movingUp) this.position.y -= this.#speed * delta;
+    if (this.#movingDown) this.position.y += this.#speed * delta;
+    this.#checkWallCollision();
+  }
 
-    return this;
+  render() {
+    this.context.beginPath();
+    this.context.rect(this.position.x, this.position.y, this.width, this.height);
+    this.context.fillStyle = 'white';
+    this.context.fill();
+    this.context.closePath();
   }
 }
