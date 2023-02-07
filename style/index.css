@@ -70,12 +70,10 @@ body {
   color: black;
 }
 
-#hud {
+#healthBars {
   position: absolute;
   inset: 0;
-}
-
-#health-bars {
+  bottom: auto;
   display: flex;
   justify-content: space-between;
 }
