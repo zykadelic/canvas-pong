@@ -1,8 +1,11 @@
+import { isValidColor } from "./utils/color.js";
+
 export default class Player {
   #game;
   #speed;
   #movingUp;
   #movingDown;
+  #color;
 
   constructor(game, playField) {
     if (!['left', 'right'].includes(playField)) {
@@ -18,6 +21,7 @@ export default class Player {
 
     this.width = 20;
     this.height = 100;
+    this.color = this.#game.color;
     this.playField = playField;
     this.position = {
       x: this.playField === 'left' ? posXOffset : this.#game.width - this.width - posXOffset,
@@ -31,6 +35,15 @@ export default class Player {
     this.didMiss = false;
 
     this.#setupControls();
+  }
+
+  // NOTE this won't show until the next render
+  set color(color) {
+    if (isValidColor(color)) this.#color = color;
+  }
+
+  get color() {
+    return this.#color;
   }
 
   #setupControls() {
@@ -68,7 +81,7 @@ export default class Player {
   render() {
     this.context.beginPath();
     this.context.rect(this.position.x, this.position.y, this.width, this.height);
-    this.context.fillStyle = 'white';
+    this.context.fillStyle = this.color;
     this.context.fill();
     this.context.closePath();
   }

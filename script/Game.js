@@ -1,5 +1,6 @@
 import Player from './Player.js';
 import Ball from './Ball.js';
+import { isValidColor } from './utils/color.js';
 
 export default class Game {
   static EVENTS = {
@@ -8,6 +9,8 @@ export default class Game {
   };
 
   #canvas;
+  #defaultColor = 'white';
+  #color;
   #previousTime;
   #fps = 0.0;
   // #targetDelta = 1 / 60 * 1000; // 60 fps
@@ -23,6 +26,7 @@ export default class Game {
     this.context = canvas.getContext('2d');
     this.width;
     this.height;
+    this.#color = this.#defaultColor;
     this.#resize();
 
     this.leftPlayer = new Player(this, 'left');
@@ -34,6 +38,20 @@ export default class Game {
       this.#resize();
       this.#render();
     });
+  }
+
+  set color(color) {
+    if (isValidColor(color)) {
+      this.#color = color;
+      this.leftPlayer.color = color;
+      this.rightPlayer.color = color;
+      this.ball.color = color;
+      this.#render();
+    }
+  }
+
+  get color() {
+    return this.#color;
   }
 
   #resize() {
@@ -76,7 +94,7 @@ export default class Game {
   #renderFPSCounter() {
     this.context.font = '1em Monofonto, sans-serif';
     this.context.textAlign = 'center';
-    this.context.fillStyle = 'white';
+    this.context.fillStyle = this.color;
     this.context.fillText(this.#fps.toFixed(2), this.width / 2, this.height - 20);
   }
 

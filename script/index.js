@@ -1,5 +1,6 @@
 import Game from './Game.js';
 
+const cssRgb = window.getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb');
 const canvas = document.querySelector('#canvas');
 const healthBars = {
   left: document.querySelector('.player-health[data-player=left]'),
@@ -8,6 +9,7 @@ const healthBars = {
 const titleScreen = document.querySelector('#titleScreen');
 const playButton = document.querySelector('[data-play]');
 const game = new Game({ canvas, debug: { fps: true } });
+game.color = `rgb(${cssRgb})`;
 
 const drawPlayerHealth = (player) => {
   const hearts = healthBars[player.playField].children;

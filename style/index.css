@@ -12,6 +12,7 @@ html,
 button {
   font-family: 'Monofonto', sans-serif;
   text-transform: uppercase;
+  color: rgb(var(--primary-rgb));
 }
 
 body {
@@ -27,7 +28,6 @@ body {
   align-items: center;
   flex-direction: column;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
   text-align: center;
 }
 
@@ -49,18 +49,17 @@ body {
 }
 
 .button {
-  border: 1px solid white;
+  border: 1px solid rgb(var(--primary-rgb));
   border-radius: 1px;
   background: transparent;
   font-size: 1.5em;
-  color: white;
   cursor: pointer;
 }
 
 .button:hover,
 .button:focus,
 .button:active {
-  background-color: white;
+  background-color: rgb(var(--primary-rgb));
   color: black;
 }
 

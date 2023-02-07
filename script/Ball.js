@@ -1,11 +1,15 @@
+import { isValidColor } from './utils/color.js';
+
 export default class Ball {
   #game;
+  #color;
   #radius = 20;
 
   constructor(game) {
     this.#game = game;
     this.context = game.context;
 
+    this.color = this.#game.color;
     this.position = {
       // initiate off-screen
       x: -this.#radius,
@@ -15,6 +19,15 @@ export default class Ball {
       x: -0.5,
       y: 0.25,
     };
+  }
+
+  // NOTE this won't show until the next render
+  set color(color) {
+    if (isValidColor(color)) this.#color = color;
+  }
+
+  get color() {
+    return this.#color;
   }
 
   #checkWallCollision() {
@@ -59,7 +72,7 @@ export default class Ball {
   render() {
     this.context.beginPath();
     this.context.arc(this.position.x, this.position.y, this.#radius, 0, Math.PI * 2);
-    this.context.fillStyle = 'white';
+    this.context.fillStyle = this.color;
     this.context.fill();
     this.context.closePath();
   }
