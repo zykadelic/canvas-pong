@@ -1,5 +1,12 @@
 :root {
-  --primary-rgb: 151, 221, 75;
+  /* Pip-Boy 3000 */
+  /* --color-blue: hsl(194, 100%, 59%); */
+  /* --color-amber: hsl(37, 100%, 63%); */
+  /* --color-green: hsl(147, 100%, 55%); */
+  /* --color-white: hsl(180, 100%, 88%); */
+
+  /* Pip-Boy 3000 Mark IV */
+  --primary-hsl: 121, 100%, 54%;
 }
 
 *,
@@ -12,7 +19,7 @@ html,
 button {
   font-family: 'Monofonto', sans-serif;
   text-transform: uppercase;
-  color: rgb(var(--primary-rgb));
+  color: hsl(var(--primary-hsl));
 }
 
 body {
@@ -27,7 +34,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.5);
+  background: hsla(0, 0%, 0%, 0.7);
   text-align: center;
 }
 
@@ -49,7 +56,7 @@ body {
 }
 
 .button {
-  border: 1px solid rgb(var(--primary-rgb));
+  border: 1px solid hsl(var(--primary-hsl));
   border-radius: 1px;
   background: transparent;
   font-size: 1.5em;
@@ -59,7 +66,7 @@ body {
 .button:hover,
 .button:focus,
 .button:active {
-  background-color: rgb(var(--primary-rgb));
+  background-color: hsl(var(--primary-hsl));
   color: black;
 }
 
@@ -123,8 +130,8 @@ body {
     linear-gradient(
       90deg,
       transparent calc(50% - var(--line-width) / 2),
-      rgba(var(--primary-rgb), 0.5) calc(50% - var(--line-width) / 2),
-      rgba(var(--primary-rgb), 0.5) calc(50% + var(--line-width) / 2),
+      hsla(var(--primary-hsl), 0.5) calc(50% - var(--line-width) / 2),
+      hsla(var(--primary-hsl), 0.5) calc(50% + var(--line-width) / 2),
       transparent calc(50% + var(--line-width) / 2)
     );
 }
