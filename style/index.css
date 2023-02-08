@@ -103,15 +103,15 @@ body {
   width: 2em;
   height: 2em;
   margin: 0 0.1em;
-  background: center/contain no-repeat url('../img/health/empty.webp');
+  background: left/300% no-repeat url('../img/health-point.webp');
 }
 
 .player-health-point[data-fill=half] {
-  background-image: url('../img/health/half.webp');
+  background-position: center;
 }
 
-.player-health-point[data-fill=full] {
-  background-image: url('../img/health/full.webp');
+.player-health-point[data-fill=empty] {
+  background-position: right;
 }
 
 #canvas {
@@ -143,6 +143,6 @@ body {
     filter: grayscale(0) brightness(1);
   }
   to {
-    filter: grayscale(1) brightness(0.3);
+    filter: grayscale(1) brightness(0.2);
   }
 }
