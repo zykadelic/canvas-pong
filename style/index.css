@@ -70,6 +70,25 @@ body {
   color: black;
 }
 
+#keybindsHint {
+  position: absolute;
+  inset: 0;
+  top: auto;
+  bottom: 1em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.player-keybinds {
+  width: 12em;
+  height: 12em;
+  background: left/200% no-repeat url('../img/keybinds.webp');
+}
+
+.player-keybinds[data-player=right] {
+  background-position: right;
+}
+
 #healthBars {
   position: absolute;
   inset: 0;

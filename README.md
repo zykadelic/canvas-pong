@@ -7,7 +7,6 @@ The js is structured in a way to allow the "client" full control of the HUD and 
 ## TODO
 
 - Do a full reset of the game area when starting a new game (player position etc.)
-- Display player controls on the title screen
 - Player serves
 - Make player respond to screen resizes
 - Add highscore / list of past matches
